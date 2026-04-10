@@ -1,3 +1,4 @@
+﻿using ISeeYou.AI;
 using LibVLCSharp.Shared;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -6,30 +7,29 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
-using ISeeYou.AI;
 
-namespace ISeeYou
+namespace ISeeYou.ViewModels
 {
-    public sealed partial class MainWindow : Window
+    public class HomePageViewModel : ObservableObject
     {
         #region Constants
 
         private const uint Width = 1920;
         private const uint Height = 1080;
-        private const uint BytePerPixel = 4; // RGBA
+        private const uint BytePerPixel = 4;
         private const uint Pitch = Width * BytePerPixel;
         private const uint Lines = Height;
 
         #endregion
 
         #region Fields
-        
+
         private YoloDetector _yoloDetector;
         private LibVLC _libVLC;
         private MediaPlayer _player;
         private DispatcherQueue _dispatcherQueue;
-        private WriteableBitmap _bitmap;
 
         private bool isPaused;
         private IntPtr _bufferPtr = IntPtr.Zero;
@@ -37,18 +37,21 @@ namespace ISeeYou
         private object _lockObject;
         private readonly object _detectionLock = new object();
 
+        private WriteableBitmap _bitmap;
+        public WriteableBitmap Bitmap
+        {
+            get => _bitmap;
+            set => SetProperty(ref _bitmap, value);
+        }
+
         #endregion
 
         #region Constructors
 
-        public MainWindow()
+        public HomePageViewModel()
         {
-            InitializeComponent();
-
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _bitmap = new WriteableBitmap((int)Width, (int)Height);
-
-            CameraStreamImage.Source = _bitmap;
 
             _lockObject = new object();
 
@@ -100,7 +103,7 @@ namespace ISeeYou
             _managedBuffer = new byte[(int)(Pitch * Lines)];
             _libVLC = new LibVLC("--no-osd", "--embedded-video", "--rtsp-tcp");
 
-            _player = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
+            _player = new MediaPlayer(_libVLC);
             _player.SetVideoFormat("RV32", Width, Height, Pitch);
             _player.SetVideoCallbacks(Lock, null, Display);
 
@@ -123,12 +126,12 @@ namespace ISeeYou
 
         #region Handlers
 
-        private void ButtonPlayPauseClick(object sender, RoutedEventArgs e)
+        public void ButtonPlayPauseClick(object sender, RoutedEventArgs e)
         {
             isPaused = !isPaused;
         }
 
-        private void ButtonMuteDesmuteClick(object sender, RoutedEventArgs e)
+        public void ButtonMuteDesmuteClick(object sender, RoutedEventArgs e)
         {
             _player.Mute = !_player.Mute;
         }
