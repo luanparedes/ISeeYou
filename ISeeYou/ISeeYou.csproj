@@ -17,11 +17,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Emgu.CV" Version="4.12.0.5764" />
     <PackageReference Include="LibVLCSharp" Version="3.9.5" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
     <PackageReference Include="Onvif.Core" Version="3.0.0" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ISeeYou.AI\ISeeYou.AI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Assets\Models\haarcascade_frontalface_default.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
     <!-- Publish Properties -->
