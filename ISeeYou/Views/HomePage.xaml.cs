@@ -14,11 +14,12 @@ namespace ISeeYou
 {
     public sealed partial class HomePage : Window
     {
-        public HomePageViewModel ViewModel { get; } = new HomePageViewModel();
+        public HomePageViewModel ViewModel;
 
-        public HomePage()
+        public HomePage(HomePageViewModel viewModel)
         {
             this.InitializeComponent();
+            ViewModel = viewModel;
         }
     }
 }
