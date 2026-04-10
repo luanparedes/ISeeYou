@@ -4,6 +4,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="../ISeeYou.AI/ISeeYou.AI/ISeeYou.AI.csproj" Id="9c13a3fe-5141-49b2-ab3f-89fc0b79eb84" />
   <Project Path="ISeeYou (Package)/ISeeYou (Package).wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5">
     <Deploy />
   </Project>

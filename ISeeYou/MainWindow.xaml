@@ -19,14 +19,20 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
                 
-        <StackPanel Grid.Row="0">
-            <Image x:Name="CameraStreamImage" 
+        <StackPanel Grid.Row="0" Grid.Column="1" Padding="12">
+            <Border BorderThickness="2" BorderBrush="Blue" CornerRadius="12">
+                <Image x:Name="CameraStreamImage"
                    Stretch="Fill" 
-                   HorizontalAlignment="Stretch" 
+                   HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"/>
+            </Border>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="12" Spacing="8">
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="12" Spacing="8">
             <Button CornerRadius="32" Padding="5" Click="ButtonPlayPauseClick" Style="{StaticResource AccentButtonStyle}">
                 <Button.Content>
                     <Image Source="/Assets/Pause.png" />
