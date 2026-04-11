@@ -59,7 +59,6 @@ namespace ISeeYou.AI
         public void Detect(uint Height, uint Width, IntPtr bufferPtr, int Pitch)
         {
             FramesJumped++;
-            _iaLog.Info("Frame counter started...");
 
             using (Mat frameRGBA = new Mat((int)Height, (int)Width, DepthTypeCv, 4, bufferPtr, (int)Pitch))
             {
@@ -88,7 +87,8 @@ namespace ISeeYou.AI
                         CvInvoke.PutText(frameRGBA, $"{det.Label} ({det.Conf:P0})",
                             new Point(det.Rect.X, det.Rect.Y - 10), FontFace.HersheySimplex, 0.6, color, 2);
 
-                        _iaLog.Info($"Detected {det.Label} with confidence {det.Conf:P0} at {det.Rect}");
+                        if (FramesJumped % 30 == 0)
+                            _iaLog.Info($"Detected {det.Label} with confidence {det.Conf:P0} at {det.Rect}");
                     }
                 }
             }
@@ -115,6 +115,8 @@ namespace ISeeYou.AI
             _net.SetPreferableTarget(IsUsingGPU ? Target.OpenCL : Target.Cpu);
 
             Detections = new List<(Rectangle, string, int, float)>();
+
+            _iaLog.Info("Frame counter started...");
         }
 
         private void ProcessYoloOutput(Mat output, int Height, int Width)

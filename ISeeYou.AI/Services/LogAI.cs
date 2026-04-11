@@ -1,6 +1,7 @@
 ﻿using ISeeYou.Core.Services;
 using Serilog;
 using System.Diagnostics;
+using static System.Net.WebRequestMethods;
 
 namespace ISeeYou.AI.Services
 {
@@ -30,7 +31,7 @@ namespace ISeeYou.AI.Services
 
         private void LoggerConfiguration()
         {
-            string file = SetLogPath();
+            string file = GetLogPath();
 
             _appLog = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -39,24 +40,22 @@ namespace ISeeYou.AI.Services
                 .CreateLogger();
         }
 
-        private static string SetLogPath()
+        private static string GetLogPath()
         {
             try
             {
-                DateTime dateTime = DateTime.Now;
                 string fileNameFormat = $"log_iseeyou.ai-.txt";
 
-                string logPath = "C:\\ISeeYou.AI.Logs";
-                string logFile = Path.Combine(logPath, "logs", fileNameFormat);
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string path = Path.Combine(localAppData, "Packages", "SunnymoonSoftware.ISeeYouSecurity_ejck4kpr8c0yt", "LocalState", "logs");
 
-                string logDirectory = Path.GetDirectoryName(logFile);
-
-                if (!Directory.Exists(logDirectory))
+                if (!Directory.Exists(path))
                 {
-                    Directory.CreateDirectory(logDirectory);
+                    Directory.CreateDirectory(path);
                 }
 
-                return logFile;
+                string filePath = Path.Combine(path, fileNameFormat);
+                return filePath;
             }
             catch (Exception ex)
             {
