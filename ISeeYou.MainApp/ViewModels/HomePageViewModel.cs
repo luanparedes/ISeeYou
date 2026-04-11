@@ -9,8 +9,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
+using ISeeYou.Core.Services;
 
-namespace ISeeYou.ViewModels
+namespace ISeeYou.MainApp.ViewModels
 {
     public class HomePageViewModel : ObservableObject
     {
@@ -46,10 +47,18 @@ namespace ISeeYou.ViewModels
 
         #endregion
 
+        #region Services
+
+        private readonly ILogService _applicationLog;
+
+        #endregion
+
         #region Constructors
 
-        public HomePageViewModel()
+        public HomePageViewModel(ILogService applicationLog)
         {
+            _applicationLog = applicationLog;
+
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _bitmap = new WriteableBitmap((int)Width, (int)Height);
 
@@ -66,9 +75,40 @@ namespace ISeeYou.ViewModels
 
         #region Private Methods
 
+        //private void Display(IntPtr opaque, IntPtr picture)
+        //{
+        //    if (isPaused || _dispatcherQueue == null) return;
+
+        //    int byteCount = (int)(Pitch * Lines);
+
+        //    Marshal.Copy(_bufferPtr, _managedBuffer, 0, byteCount);
+
+        //    _yoloDetector.Detect((int)Height, (int)Width, _bufferPtr, (int)Pitch);
+
+        //    Marshal.Copy(_bufferPtr, _managedBuffer, 0, byteCount);
+
+        //    _dispatcherQueue.TryEnqueue(() =>
+        //    {
+        //        lock (_lockObject)
+        //        {
+        //            try
+        //            {
+        //                using (var stream = _bitmap.PixelBuffer.AsStream())
+        //                {
+        //                    stream.Position = 0;
+        //                    stream.Write(_managedBuffer, 0, byteCount);
+        //                }
+        //                _bitmap.Invalidate();
+        //            }
+        //            catch (Exception ex) { Debug.WriteLine("Erro render: " + ex.Message); }
+        //        }
+        //    });
+        //}
+
         private void Display(IntPtr opaque, IntPtr picture)
         {
-            if (isPaused || _dispatcherQueue == null) return;
+            if (isPaused || _dispatcherQueue == null)
+                return;
 
             int byteCount = (int)(Pitch * Lines);
 
@@ -87,6 +127,7 @@ namespace ISeeYou.ViewModels
                             stream.Write(_managedBuffer, 0, byteCount);
                         }
                         _bitmap.Invalidate();
+                        OnPropertyChanged(nameof(Bitmap));
                     }
                     catch (Exception ex) { Debug.WriteLine("Erro: " + ex.Message); }
                 }
@@ -95,9 +136,11 @@ namespace ISeeYou.ViewModels
 
         private void InitializeVlc()
         {
+            _applicationLog.Info("Initializing VLC...");
+
             string libPath = System.IO.Path.Combine(AppContext.BaseDirectory, "libvlc", "win-x64");
 
-            Core.Initialize("C:\\Developer\\Softwares\\C#\\ISeeYou\\ISeeYou (Package)\\bin\\x64\\Debug\\AppX\\libvlc\\win-x64");
+            LibVLCSharp.Shared.Core.Initialize("C:\\Developer\\Softwares\\C#\\ISeeYou\\ISeeYou (Package)\\bin\\x64\\Debug\\AppX\\libvlc\\win-x64");
 
             _bufferPtr = Marshal.AllocHGlobal((int)(Pitch * Lines));
             _managedBuffer = new byte[(int)(Pitch * Lines)];
@@ -110,12 +153,17 @@ namespace ISeeYou.ViewModels
             string rtspUrl = "rtsp://admin:Paredes2026@192.168.0.5:8554/Streaming/Channels/101";
             var media = new Media(_libVLC, new Uri(rtspUrl));
 
+            _applicationLog.Info("Starting video playback...");
+
             _player.Play(media);
+
+            _applicationLog.Info("VLC initialized and video playback started.");
         }
 
         private IntPtr Lock(IntPtr opaque, IntPtr planes)
         {
-            if (_bufferPtr == IntPtr.Zero) return IntPtr.Zero;
+            if (_bufferPtr == IntPtr.Zero) 
+                return IntPtr.Zero;
 
             Marshal.WriteIntPtr(planes, _bufferPtr);
 
@@ -129,11 +177,13 @@ namespace ISeeYou.ViewModels
         public void ButtonPlayPauseClick(object sender, RoutedEventArgs e)
         {
             isPaused = !isPaused;
+            _applicationLog.Info(isPaused ? "Video paused." : "Video resumed.");
         }
 
         public void ButtonMuteDesmuteClick(object sender, RoutedEventArgs e)
         {
             _player.Mute = !_player.Mute;
+            _applicationLog.Info(_player.Mute ? "Video muted." : "Video unmuted.");
         }
 
         #endregion
