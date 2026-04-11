@@ -9,15 +9,15 @@
   IgnorableNamespaces="uap rescap systemai">
 
   <Identity
-    Name="64436b37-a4ad-4fad-bb1b-5a3ec019a034"
-    Publisher="CN=luans"
+    Name="SunnymoonSoftware.ISeeYouSecurity"
+    Publisher="CN=267D9785-0928-4547-B685-40A9EADDFB64"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="64436b37-a4ad-4fad-bb1b-5a3ec019a034" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>ISeeYou (Package)</DisplayName>
-    <PublisherDisplayName>luans</PublisherDisplayName>
+    <DisplayName>ISeeYou</DisplayName>
+    <PublisherDisplayName>Sunnymoon Software</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -35,8 +35,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="ISeeYou (Package)"
-        Description="ISeeYou (Package)"
+        DisplayName="I See You"
+        Description="ISeeYou"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">

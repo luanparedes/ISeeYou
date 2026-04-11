@@ -8,7 +8,8 @@
     <Deploy />
   </Project>
   <Project Path="ISeeYou.AI/ISeeYou.AI.csproj" />
-  <Project Path="ISeeYou/ISeeYou.csproj">
+  <Project Path="ISeeYou.Core/ISeeYou.Core.csproj" Id="278f5379-8441-4bfa-8407-c9abae89dbf5" />
+  <Project Path="ISeeYou.MainApp/ISeeYou.MainApp.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
     <Platform Solution="*|x86" Project="x86" />

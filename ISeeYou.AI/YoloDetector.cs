@@ -2,6 +2,9 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.Dnn;
 using Emgu.CV.Structure;
+using ISeeYou.AI.Services;
+using ISeeYou.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -35,10 +38,17 @@ namespace ISeeYou.AI
 
         #endregion
 
+        #region Services
+        
+        private readonly ILogService _iaLog;
+
+        #endregion
+
         #region Constructors
 
         public YoloDetector(string modelPath, string namesPath)
         {
+            _iaLog = new LogAI();
             Config(modelPath, namesPath);
         }
 
@@ -76,8 +86,17 @@ namespace ISeeYou.AI
                         CvInvoke.Rectangle(frameRGBA, det.Rect, color, 2);
                         CvInvoke.PutText(frameRGBA, $"{det.Label} ({det.Conf:P0})",
                             new Point(det.Rect.X, det.Rect.Y - 10), FontFace.HersheySimplex, 0.6, color, 2);
+
+                        if (FramesJumped % 30 == 0)
+                            _iaLog.Info($"Detected {det.Label} with confidence {det.Conf:P0} at {det.Rect}");
                     }
                 }
+            }
+
+            if (FramesJumped >= 1000)
+            {
+                FramesJumped = 0;
+                _iaLog.Info("Frame counter reset after reaching 1000!");
             }
         }
 
@@ -88,12 +107,16 @@ namespace ISeeYou.AI
         private void Config(string modelPath, string namesPath)
         {
             _net = DnnInvoke.ReadNetFromONNX(modelPath);
+            _iaLog.Info($"Model loaded from {modelPath}");
+
             _classNames = File.ReadAllLines(namesPath);
 
             _net.SetPreferableBackend(Emgu.CV.Dnn.Backend.OpenCV);
             _net.SetPreferableTarget(IsUsingGPU ? Target.OpenCL : Target.Cpu);
 
             Detections = new List<(Rectangle, string, int, float)>();
+
+            _iaLog.Info("Frame counter started...");
         }
 
         private void ProcessYoloOutput(Mat output, int Height, int Width)
